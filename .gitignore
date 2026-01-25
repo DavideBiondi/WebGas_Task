@@ -1,0 +1,27 @@
+# Shopify theme runtime data
+webgas-theme/config/settings_data.json
+
+# Shopify CLI
+.shopify/
+.shopify.lock
+
+# OS / Editor temp files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.vscode/
+.idea/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+## Release files
+release
+*.zip
