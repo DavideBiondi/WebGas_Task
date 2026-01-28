@@ -8,9 +8,8 @@ STATO ATTUALE DEL LAVORO
 Task completati:
 
 1. Utilizzo di un tema OS 2.0 (Skeleton / Shopify App Template) ✓
-2. Utilizzo di dati reali Shopify
-   - Prodotti e varianti reali già renderizzati tramite Liquid
-3. Utilizzo di Liquid per esposizione dati prodotto/variant
+2. Utilizzo di dati reali Shopify ✓
+3. Utilizzo di Liquid per esposizione dati prodotto/variant ✓
    - PLP (Product Listing Page) ✓
    - PDP (Product Detail Page) ✓
 4. Ajax Cart API per gestione quantity e cart state ✓
