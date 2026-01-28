@@ -13,13 +13,13 @@ Task completati:
 3. Utilizzo di Liquid per esposizione dati prodotto/variant
    - PLP (Product Listing Page) ✓
    - PDP (Product Detail Page) ✓
+4. Ajax Cart API per gestione quantity e cart state ✓
 6. Evento GA4 'view_item' su PDP ✓
 7. Evento GA4 'add_to_cart' (logica base lato frontend) ✓
 9. Formato eventi compatibile GA4 ✓
 
 Task NON ancora completati:
 
-4. Ajax Cart API per gestione quantity e cart state
 5. Ajax Cart API (/cart.js, /cart/add.js) per cart e add to cart
 8. Evento su thank you page
 
@@ -54,9 +54,12 @@ STRUTTURA ATTUALE
 - Liquid:
   - template prodotto (PDP)
   - loop prodotti (PLP)
+  
 - JavaScript:
-  - gestione evento 'view_item'
-  - gestione evento 'add_to_cart' (fetch POST su '/cart/add.js')
+  - evento GA4 'view_item' (PDP)
+  - evento GA4 'add_to_cart' (logica frontend, fetch su '/cart/add.js')
+  - lettura stato carrello (fetch GET su '/cart.js')
+
 - Data Layer:
   - struttura conforme a GA4
 
