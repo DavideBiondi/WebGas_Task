@@ -1,0 +1,72 @@
+WebGas - Shopify GA4 / Data Layer Challenge
+
+Questo repository contiene il lavoro svolto per la mini challenge tecnica WebGas
+su Shopify (OS 2.0) con integrazione eventi GA4 tramite dataLayer.
+
+STATO ATTUALE DEL LAVORO
+-----------------------
+Task completati:
+
+1. Utilizzo di un tema OS 2.0 (Skeleton / Shopify App Template) ✓
+2. Utilizzo di dati reali Shopify
+   - Prodotti e varianti reali già renderizzati tramite Liquid
+3. Utilizzo di Liquid per esposizione dati prodotto/variant
+   - PLP (Product Listing Page) ✓
+   - PDP (Product Detail Page) ✓
+6. Evento GA4 'view_item' su PDP ✓
+7. Evento GA4 'add_to_cart' (logica base lato frontend) ✓
+9. Formato eventi compatibile GA4 ✓
+
+Task NON ancora completati:
+
+4. Ajax Cart API per gestione quantity e cart state
+5. Ajax Cart API (/cart.js, /cart/add.js) per cart e add to cart
+8. Evento su thank you page
+
+NOTE TECNICHE
+-------------
+- Gli eventi GA4 vengono pushati tramite 'window.dataLayer'
+- I dati prodotto e variante sono passati da Liquid a JavaScript
+  tramite oggetti serializzati ('| json')
+
+PROBLEMA NOTO (LOCALE vs PRODUCTION)
+-----------------------------------
+È stato riscontrato un comportamento anomalo delle API Ajax Cart:
+
+- In ambiente production Shopify:
+  - '/cart.js' e '/cart/add.js' rispondono correttamente con HTTP 200:
+  "response status: 200 add_to_cart.js:1:390
+raw response: {"id":50868030800178,"properties":{},"quantity":1,"variant_id":50868030800178,"key":"50868030800178:0767f58c23636a61eb9128b34e12f8f0","title":"The Collection Snowboard: Liquid","product_title":"The Collection Snowboard: Liquid","variant_title":null,"price":74995,"original_price":74995,"discounted_price":74995,"line_price":74995,"original_line_price":74995,"presentment_price":749.95,"total_discount":0,"discounts":[],"sku":"","grams":0,"vendor":"Hydrogen Vendor","taxable":true,"product_id":10095213412658,"product_has_only_default_variant":true,"gift_card":false,"final_price":74995,"final_line_price":74995,"url":"/products/the-collection-snowboard-liquid?variant=50868030800178","featured_image":{"alt":"Top and bottom view of a snowboard. The top view shows a stylized scene of water, trees, mountains, sky and a moon in blue colours. The bottom view has a blue liquid, drippy background with the text \"liquid\" in a stylized script typeface.","aspect_ratio":1.0,"height":1600,"url":"https://cdn.shopify.com/s/files/1/0968/6214/2770/files/Main_b13ad453-477c-4ed1-9b43-81f3345adfd6.jpg?v=1769347822","width":1600},"image":"https://cdn.shopify.com/s/files/1/0968/6214/2770/files/Main_b13ad453-477c-4ed1-9b43-81f3345adfd6.jpg?v=1769347822","handle":"the-collection-snowboard-liquid","requires_shipping":true,"product_type":"snowboard","untranslated_product_title":"The Collection Snowboard: Liquid","product_description":null,"untranslated_variant_title":null,"variant_options":["Default Title"],"options_with_values":[{"name":"Title","value":"Default Title"}],"line_level_discount_allocations":[],"line_level_total_discount":0} add_to_cart.js:1:458"
+
+- In ambiente locale (localhost / sviluppo):
+  - Le stesse chiamate rispondono con HTTP 401 (Unauthorized):
+  "response status: 401 add_to_cart.js:21:15
+raw response: <empty string> add_to_cart.js:25:15"
+
+Questo comportamento sembra legato alle policy di Shopify
+(same-origin, sessione, cookies, o restrizioni sull’uso delle Ajax Cart API
+fuori dal dominio Shopify).
+
+Il problema è documentato ma non completamente risolto all’interno di questa challenge.
+
+STRUTTURA ATTUALE
+-----------------
+- Liquid:
+  - template prodotto (PDP)
+  - loop prodotti (PLP)
+- JavaScript:
+  - gestione evento 'view_item'
+  - gestione evento 'add_to_cart' (fetch POST su '/cart/add.js')
+- Data Layer:
+  - struttura conforme a GA4
+
+NOTE FINALI
+-----------
+Il focus della challenge è stato:
+- comprensione del flusso dati Shopify → Liquid → JS → GA4
+- corretto mapping degli eventi GA4
+- utilizzo delle API Shopify secondo documentazione ufficiale
+
+Il progetto non è pensato come soluzione production-ready,
+ma come esercizio tecnico e dimostrazione di ragionamento e apprendimento.
+

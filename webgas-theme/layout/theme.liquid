@@ -32,5 +32,7 @@
     {{ content_for_layout }}
 
     {% sections 'footer-group' %}
+    <script src="{{ 'view_item.js' | asset_url }}" defer></script>
+    <script src="{{ 'add_to_cart.js' | asset_url }}" defer></script>
   </body>
 </html>

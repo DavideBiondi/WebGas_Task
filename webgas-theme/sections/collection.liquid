@@ -22,8 +22,21 @@
           %}
         {% endif %}
         <div class="collection-product__content">
-          <p>{{ product.title | escape | link_to: product.url }}</p>
-          <p>{{ product.price | money }}</p>
+          <p>
+            <a href="{{ product.url }}">
+              {{ product.title | escape }}
+            </a>
+          </p>
+          
+          {% if product.compare_at_price > product.price %}
+            <p>
+              <span class="price--sale">{{ product.price | money }}</span>
+              <s class="price--compare">{{ product.compare_at_price | money }}</s>
+            </p>
+          {% else %}
+            <p>{{ product.price | money }}</p>
+          {% endif %}
+          
         </div>
       </div>
     {% endfor %}

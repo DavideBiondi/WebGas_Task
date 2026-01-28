@@ -3,6 +3,9 @@
   media, content, and add-to-cart form.
 
   https://shopify.dev/docs/storefronts/themes/architecture/templates/product
+
+  IMPORTANTE: a differenza di flask python, liquid sembra gestire meglio le parentesi graffe
+  nei commenti
 {% endcomment %}
 
 <div class="product-images">
@@ -11,17 +14,45 @@
   {% endfor %}
 </div>
 
-<div class="product-info">
+{% comment %} <div class="product-info">
   <h1>{{ product.title }}</h1>
   <p>{{ product.price | money }}</p>
   <p>{{ product.description }}</p>
+</div> {% endcomment %}
+
+
+{% comment %} Per evitare problemi di scoping {% endcomment %}
+{% assign current_variant = product.selected_or_first_available_variant %}
+<div 
+  class="product-info"
+  data-product-id="{{ product.id }}"
+  data-product-title="{{ product.title }}"
+  data-product-price="{{ current_variant.price | money_without_currency }}"
+  data-product-currency="{{ cart.currency.iso_code }}"
+>
+  <h1>{{ product.title }}</h1>
 </div>
 
 <div class="product-form">
   {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
+    {% comment %} {% assign current_variant = product.selected_or_first_available_variant %} {% endcomment %}
 
-    <select name="id">
+    <p class="product-price">
+      {%  if current_variant.compare_at_price > current_variant.price %}
+        <span class="price--sale">{{ current_variant.price | money }}</span>
+        <s class="price--compare"{{ current_variant.compare_at_price | money }}></s>
+        {% else %}
+          <span class="price--regular">{{ current_variant.price | money }}</span>
+      {% endif %}
+    </p>
+
+    {% if current_variant.available %}
+      <p class="availability available">Disponibile</p>
+      {% else %}
+        <p class="availability unavailable">Esaurito</p>
+    {% endif %}
+
+    {% comment %} <select name="id">
       {% for variant in product.variants %}
         <option
           value="{{ variant.id }}"
@@ -32,14 +63,71 @@
           {{ variant.title }} - {{ variant.price | money }}
         </option>
       {% endfor %}
-    </select>
+    </select> {% endcomment %}
 
-    <input type="text" name="quantity" min="1" value="1">
+    {% comment %} le varianti non disponibili vengono disabilitate {% endcomment %}
+    {% comment %} commentato per diminuire il rumore {% endcomment %}
+    {% comment %} <select name="product_id">
+      {% for variant in product.variants %}
+        <option
+          value="{{ variant.id }}"
+          {% if variant == current_variant %} selected {% endif %}
+          {% unless variant.available %} disabled {% endunless %}    
+        >
+          {{ variant.title }} - {{ variant.price | money }}
+        </option>
+      {% endfor %}
+    </select> {% endcomment %}
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
+    {% comment %} <input 
+      type="text" 
+      name="quantity" 
+      min="1" 
+      value="1"
+    > {% endcomment %}
+
+    {% comment %} <input 
+      type="number" 
+      name="quantity" 
+      min="1" 
+      value="1"
+    > {% endcomment %}
+
+    {% comment %} <input type="submit" value="Add to cart"> {% endcomment %}
+    {% comment %} un payment_button dentro form custom può bypassare la logica di JS {% endcomment %}
+    {% comment %} {{ form | payment_button }}  {% endcomment %}
+
+    <button type="submit">
+      Add to cart
+    </button>
+    
+
+    {% comment %} per far funzionare le chiamate Ajax {% endcomment %}
+    {% comment %} mettere sempre in double quotes i values {% endcomment %}
+    {% comment %} Per Shopify Ajax API (/cart/add.js) il body deve avere almeno: 
+    id=VARIANT_ID
+    quantity=NUMERO
+    {% endcomment %}
+    <input type="hidden" name="id" value="{{ current_variant.id }}">
+    <input type="number" name="quantity" min="1" value="1">
+     
+
+    {% comment %} non annidare mai i form uno nell'altro {% endcomment %}
+    {% comment %} <form
+    method="post"
+    {% comment %} Use routes object {{ routes.cart_add_url }} instead of hardcoding /cart/add {% endcomment %}
+    action={{ routes.cart_add_url }}
+    data-product-id="{{ product.id }}"
+    data-variant-id="{{ current_variant.id }}"
+    data-product-title="{{ product.title }}"
+    >
+
+    </form> {% endcomment %}
   {% endform %}
 </div>
+{% comment %} hai bisogno di una sola inclusione js, in theme.liquid {% endcomment %}
+{% comment %} {{ 'view_item.js' | asset_url | script_tag }} {% endcomment %}
+{% comment %} <script src="{{ 'view_item.js' | asset_url }}" defer></script> {% endcomment %}
 
 {% schema %}
 {

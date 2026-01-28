@@ -5,7 +5,13 @@
 <div class="welcome full-width">
   <div class="welcome-content">
     <div>
-      <h1>Hello, World!</h1>
+      <h1>Welcome to {{ shop.name }}</h1>
+
+      {% if shop.description != blank %}
+        <p class="welcome-description">
+          {{ shop.description }}
+        </p> 
+      {% endif %}
 
       <p class="welcome-description">
         The Skeleton theme is a minimal, carefully structured Shopify theme designed to help you quickly get started.
@@ -16,6 +22,20 @@
         Themes shape the online store experience for merchants and their customers. Build fast, flexible themes at scale
         using Liquid, Shopify's theme templating language, along with HTML, CSS, JavaScript, and JSON.
       </p>
+
+      <p>
+        {% for collection in collections %}
+          {% if collection.products_count > 0 %}
+            <li>
+              <a href="{{ collection.url }}">
+                {{ collection.title }} ({{ collection.products_count }})
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+        
+      </p>
+
     </div>
     <div class="icon">
       <img src="{{ 'shoppy-x-ray.svg' | asset_url }}" width="300" height="300">

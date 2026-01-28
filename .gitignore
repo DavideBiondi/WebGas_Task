@@ -25,3 +25,7 @@ yarn-error.log*
 ## Release files
 release
 *.zip
+
+#log files
+*.log
+*.txt
